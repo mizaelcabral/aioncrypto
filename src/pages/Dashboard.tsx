@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, X, Loader2, ArrowUpRight, ArrowDownRight, Send, Download, ArrowRightLeft } from 'lucide-react';
+import { Search, Plus, X, Loader2, ArrowUpRight, ArrowDownRight, Send, Download, ArrowRightLeft, Info } from 'lucide-react';
 import { Area, AreaChart, ResponsiveContainer, YAxis } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 import TokenCard from '../components/TokenCard';
 import DashboardHeader from '../components/DashboardHeader';
 
@@ -45,6 +46,15 @@ export default function Dashboard() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
+
+    // Toast and Navigation
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const navigate = useNavigate();
+
+    const showToast = (msg: string) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(null), 3000);
+    };
 
     // Save tokensList to localStorage when it changes
     useEffect(() => {
@@ -106,7 +116,18 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="pt-4 md:pt-8 px-4 md:px-8 xl:px-12 w-full max-w-[1800px] mx-auto min-h-screen pb-24 md:pb-8 pt-safe">
+        <div className="pt-4 md:pt-8 px-4 md:px-8 xl:px-12 w-full max-w-[1800px] mx-auto min-h-screen pb-24 md:pb-8 pt-safe relative">
+
+            {/* Custom Toast */}
+            {toastMessage && (
+                <div className="fixed bottom-24 md:bottom-12 right-4 md:right-12 z-50 bg-[#131128] border border-white/10 shadow-2xl shadow-black/50 rounded-2xl p-4 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-5">
+                    <div className="w-8 h-8 rounded-full bg-primary-purple/20 text-primary-purple flex items-center justify-center shrink-0">
+                        <Info size={16} />
+                    </div>
+                    <span className="text-white font-medium text-sm">{toastMessage}</span>
+                </div>
+            )}
+
             {/* Dashboard Header */}
             <DashboardHeader title="Tokens" />
 
@@ -148,32 +169,47 @@ export default function Dashboard() {
 
                     {/* Quick Actions */}
                     <div className="flex flex-wrap justify-center bg-[#100e23]/80 backdrop-blur-md p-2 rounded-3xl border border-white/10 gap-2 w-full md:w-auto mt-6 md:mt-0">
-                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                        <button
+                            onClick={() => navigate('/buy')}
+                            className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]"
+                        >
                             <div className="w-10 h-10 rounded-full bg-primary-purple flex items-center justify-center text-white shadow-lg shadow-primary-purple/20">
                                 <ArrowUpRight size={20} />
                             </div>
                             <span className="text-xs font-semibold">Buy</span>
                         </button>
-                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                        <button
+                            onClick={() => navigate('/buy')}
+                            className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]"
+                        >
                             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
                                 <ArrowDownRight size={20} />
                             </div>
                             <span className="text-xs font-semibold">Sell</span>
                         </button>
-                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                        <button
+                            onClick={() => navigate('/buy')}
+                            className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]"
+                        >
                             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
                                 <ArrowRightLeft size={20} />
                             </div>
                             <span className="text-xs font-semibold">Swap</span>
                         </button>
                         <div className="hidden md:block w-px h-12 bg-white/10 self-center mx-2" />
-                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                        <button
+                            onClick={() => showToast('Send feature is coming soon!')}
+                            className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]"
+                        >
                             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
                                 <Send size={20} />
                             </div>
                             <span className="text-xs font-semibold">Send</span>
                         </button>
-                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                        <button
+                            onClick={() => showToast('Receive feature is coming soon!')}
+                            className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]"
+                        >
                             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
                                 <Download size={20} />
                             </div>

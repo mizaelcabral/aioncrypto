@@ -187,15 +187,7 @@ export default function Dashboard() {
                             </div>
                             <span className="text-xs font-semibold">Sell</span>
                         </button>
-                        <button
-                            onClick={() => navigate('/buy')}
-                            className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]"
-                        >
-                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
-                                <ArrowRightLeft size={20} />
-                            </div>
-                            <span className="text-xs font-semibold">Swap</span>
-                        </button>
+
                         <div className="hidden md:block w-px h-12 bg-white/10 self-center mx-2" />
                         <button
                             onClick={() => showToast('Send feature is coming soon!')}

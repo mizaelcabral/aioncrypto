@@ -28,7 +28,7 @@ export default function BuyDashboard() {
     }, []);
 
     return (
-        <div className="pt-4 md:pt-8 px-4 md:px-8 xl:px-12 w-full mx-auto min-h-screen pb-24 md:pb-12 pt-safe">
+        <div className="pt-4 md:pt-8 px-4 md:px-8 xl:px-12 w-full max-w-[1800px] mx-auto min-h-screen pb-24 md:pb-12 pt-safe">
             <DashboardHeader title="Buy & Sell" className="mb-6 md:mb-12" />
 
             <div className="flex flex-col xl:flex-row gap-6 md:gap-8 mt-4 md:mt-8">
@@ -44,7 +44,7 @@ export default function BuyDashboard() {
                 {/* Right Column: Grid of Cryptos */}
                 <div className="flex-1">
                     <h3 className="text-2xl font-bold mb-6">Market Overview</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-6">
                         {loading ? (
                             Array.from({ length: 6 }).map((_, i) => (
                                 <TokenCard

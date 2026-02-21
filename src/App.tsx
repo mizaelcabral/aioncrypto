@@ -29,7 +29,7 @@ function AppLayout() {
       ) : <Navbar />)}
       {isAdminArea && <AdminSidebar />}
 
-      <main className={`flex-1 w-full ${isDashboardArea ? 'md:ml-20 pb-20 md:pb-0' : ''} ${isAdminArea ? 'ml-64' : ''}`}>
+      <main className={`flex-1 flex flex-col min-h-screen ${isDashboardArea ? 'md:ml-20 pb-20 md:pb-0' : ''} ${isAdminArea ? 'ml-64' : ''}`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />

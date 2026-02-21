@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, Bell, User, LogOut, Settings as SettingsIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 interface DashboardHeaderProps {
     title: string;
@@ -13,6 +14,7 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
     const profileRef = useRef<HTMLDivElement>(null);
     const notifRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const { signOut, user } = useAuth();
 
     // Close dropdowns on outside click
     useEffect(() => {
@@ -28,8 +30,8 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const handleLogout = () => {
-        // Clear tokens/session logic can go here
+    const handleLogout = async () => {
+        await signOut();
         navigate('/login');
     };
 
@@ -100,8 +102,8 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
                     {isProfileOpen && (
                         <div className="absolute right-0 mt-3 w-56 bg-[#131128] rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] py-2 z-50 overflow-hidden">
                             <div className="px-4 py-3 border-b border-white/5 mb-1 bg-white/[0.02]">
-                                <p className="text-sm font-bold text-white">Sophie Moore</p>
-                                <p className="text-xs text-text-secondary">sophie@example.com</p>
+                                <p className="text-sm font-bold text-white">Gestor / Paciente</p>
+                                <p className="text-xs text-text-secondary truncate">{user?.email || 'usuario@rootcare.com'}</p>
                             </div>
 
                             <button

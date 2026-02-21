@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Wallet } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
+    const { user } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -27,6 +29,10 @@ export default function Login() {
         }
         setLoading(false);
     };
+
+    if (user) {
+        return <Navigate to="/dashboard" replace />;
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center p-6 relative">

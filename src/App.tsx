@@ -13,6 +13,8 @@ import Register from './pages/Register';
 import Portfolio from './pages/Portfolio';
 import History from './pages/History';
 import Settings from './pages/Settings';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './contexts/AuthContext';
 
 function AppLayout() {
   const location = useLocation();
@@ -32,13 +34,17 @@ function AppLayout() {
       <main className={`flex-1 flex flex-col min-h-screen ${isDashboardArea ? 'md:ml-20 pb-20 md:pb-0' : ''} ${isAdminArea ? 'ml-64' : ''}`}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/buy" element={<BuyDashboard />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/settings" element={<Settings />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+          {/* Protected Dashboard Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/buy" element={<BuyDashboard />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
 
           {/* Admin Protected Routes */}
           <Route element={<AdminRoute />}>
@@ -54,7 +60,9 @@ function AppLayout() {
 function App() {
   return (
     <Router>
-      <AppLayout />
+      <AuthProvider>
+        <AppLayout />
+      </AuthProvider>
     </Router>
   );
 }

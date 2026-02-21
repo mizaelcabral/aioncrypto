@@ -11,7 +11,7 @@ export default function Sidebar() {
     ];
 
     return (
-        <aside className="fixed left-0 top-0 h-screen w-20 bg-bg-deep border-r border-white/5 flex flex-col items-center py-6 z-40">
+        <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 bg-bg-deep border-r border-white/5 flex-col items-center py-6 z-40">
             <div className="mb-12">
                 <div className="bg-primary-purple p-2.5 rounded-xl">
                     <Wallet size={24} className="text-white" />

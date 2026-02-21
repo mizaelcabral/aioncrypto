@@ -106,7 +106,7 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="pt-8 px-8 xl:px-12 w-full mx-auto min-h-screen">
+        <div className="pt-4 md:pt-8 px-4 md:px-8 xl:px-12 w-full mx-auto min-h-screen pb-24 md:pb-8 pt-safe">
             {/* Dashboard Header */}
             <DashboardHeader title="Tokens" />
 
@@ -147,7 +147,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="flex bg-[#100e23]/80 backdrop-blur-md p-2 rounded-3xl border border-white/10 gap-2">
+                    <div className="flex flex-wrap justify-center bg-[#100e23]/80 backdrop-blur-md p-2 rounded-3xl border border-white/10 gap-2 w-full md:w-auto mt-6 md:mt-0">
                         <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
                             <div className="w-10 h-10 rounded-full bg-primary-purple flex items-center justify-center text-white shadow-lg shadow-primary-purple/20">
                                 <ArrowUpRight size={20} />
@@ -166,7 +166,7 @@ export default function Dashboard() {
                             </div>
                             <span className="text-xs font-semibold">Swap</span>
                         </button>
-                        <div className="w-px h-12 bg-white/10 self-center mx-2" />
+                        <div className="hidden md:block w-px h-12 bg-white/10 self-center mx-2" />
                         <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
                             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
                                 <Send size={20} />

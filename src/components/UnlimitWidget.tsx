@@ -11,7 +11,7 @@ export default function UnlimitWidget() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary-purple/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
 
             <div className="flex justify-between items-center mb-8">
-                <h3 className="text-2xl font-bold">Unlimit Express</h3>
+                <h3 className="text-2xl font-bold">Fiat Gateway</h3>
                 <div className="flex bg-[#100e23] rounded-full p-1 border border-white/5">
                     <button
                         className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${action === 'buy' ? 'bg-primary-purple text-white' : 'text-text-secondary hover:text-white'}`}
@@ -89,12 +89,12 @@ export default function UnlimitWidget() {
                 </div>
 
                 <button className="w-full bg-primary-purple hover:bg-white hover:text-bg-deep text-white font-bold py-4 rounded-xl transition-all shadow-[0_4px_14px_0_rgba(102,57,228,0.39)]">
-                    {action === 'buy' ? 'Buy BTC via Unlimit' : 'Sell BTC via Unlimit'}
+                    {action === 'buy' ? 'Buy Crypto' : 'Sell Crypto'}
                 </button>
 
                 <p className="text-xs text-center text-text-secondary mt-4 flex items-center justify-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                    Powered by Unlimit Crypto API
+                    Protected by Secure Encryption
                 </p>
             </div>
         </div>

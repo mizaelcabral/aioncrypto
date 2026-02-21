@@ -28,15 +28,15 @@ export default function BuyDashboard() {
     }, []);
 
     return (
-        <div className="pt-8 px-8 xl:px-12 w-full mx-auto min-h-screen pb-12">
-            <DashboardHeader title="Buy & Sell" className="mb-12" />
+        <div className="pt-4 md:pt-8 px-4 md:px-8 xl:px-12 w-full mx-auto min-h-screen pb-24 md:pb-12 pt-safe">
+            <DashboardHeader title="Buy & Sell" className="mb-6 md:mb-12" />
 
-            <div className="flex flex-col xl:flex-row gap-8 mt-8">
-                {/* Left Column: Unlimit Widget */}
+            <div className="flex flex-col xl:flex-row gap-6 md:gap-8 mt-4 md:mt-8">
+                {/* Left Column: Fiat Gateway Widget */}
                 <div className="w-full xl:w-[450px] shrink-0">
                     <h2 className="text-3xl font-bold mb-4">Trade Crypto easily</h2>
                     <p className="text-text-secondary text-lg mb-8 leading-relaxed">
-                        Securely buy, sell, and exchange bridging the gap between traditional banking and crypto via Unlimit's extensive network.
+                        Securely buy, sell, and exchange bridging the gap between traditional banking and crypto via our secure fiat gateway.
                     </p>
                     <UnlimitWidget />
                 </div>

@@ -34,10 +34,10 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
     };
 
     return (
-        <header className={`flex items-center justify-between py-4 ${className}`}>
-            <div className="flex items-center gap-6">
-                <h1 className="text-3xl font-bold">{title}</h1>
-                <div className="relative hidden md:block">
+        <header className={`flex items-center justify-between py-2 md:py-4 ${className}`}>
+            <div className="flex items-center gap-4 md:gap-6">
+                <h1 className="text-xl md:text-3xl font-bold truncate">{title}</h1>
+                <div className="relative hidden lg:block">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
                     <input
                         type="text"
@@ -89,10 +89,10 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
                 <div className="relative" ref={profileRef}>
                     <div
                         onClick={() => { setIsProfileOpen(!isProfileOpen); setIsNotifOpen(false); }}
-                        className="flex items-center gap-3 bg-[rgba(40,36,84,0.4)] py-1.5 px-2 rounded-full cursor-pointer hover:bg-[rgba(40,36,84,0.6)] transition-all border border-white/5 hover:border-primary-purple/30 group"
+                        className="flex items-center gap-2 md:gap-3 bg-[rgba(40,36,84,0.4)] py-1.5 px-2 rounded-full cursor-pointer hover:bg-[rgba(40,36,84,0.6)] transition-all border border-white/5 hover:border-primary-purple/30 group"
                     >
-                        <span className="text-sm font-medium pl-3 text-text-secondary group-hover:text-white transition-colors">Sophie Moore</span>
-                        <div className="w-8 h-8 rounded-full bg-primary-purple flex items-center justify-center font-bold text-sm text-white shadow-[0_0_10px_rgba(102,57,228,0.5)]">
+                        <span className="hidden sm:block text-sm font-medium pl-3 text-text-secondary group-hover:text-white transition-colors">Sophie Moore</span>
+                        <div className="w-8 h-8 rounded-full bg-primary-purple flex items-center justify-center font-bold text-sm text-white shadow-[0_0_10px_rgba(102,57,228,0.5)] shrink-0">
                             SM
                         </div>
                     </div>

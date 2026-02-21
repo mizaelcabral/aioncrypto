@@ -16,7 +16,7 @@ export default function Settings() {
     };
 
     return (
-        <div className="pt-8 px-8 max-w-[1600px] mx-auto min-h-screen pb-12">
+        <div className="pt-4 md:pt-8 px-4 md:px-8 max-w-[1600px] mx-auto min-h-screen pb-32 md:pb-12 pt-safe">
             <DashboardHeader title="Configurações e Perfil" />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">

@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import MobileNav from './components/MobileNav';
 import AdminSidebar from './components/AdminSidebar';
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -19,11 +20,16 @@ function AppLayout() {
   const isAdminArea = location.pathname.startsWith('/admin');
 
   return (
-    <div className={`min-h-screen bg-bg-deep text-white font-sans selection:bg-primary-purple selection:text-white flex`}>
-      {!isAdminArea && (isDashboardArea ? <Sidebar /> : <Navbar />)}
+    <div className={`min-h-[100dvh] bg-bg-deep text-white font-sans selection:bg-primary-purple selection:text-white flex`}>
+      {!isAdminArea && (isDashboardArea ? (
+        <>
+          <Sidebar />
+          <MobileNav />
+        </>
+      ) : <Navbar />)}
       {isAdminArea && <AdminSidebar />}
 
-      <main className={`flex-1 ${isDashboardArea ? 'ml-20' : ''} ${isAdminArea ? 'ml-64' : ''}`}>
+      <main className={`flex-1 w-full ${isDashboardArea ? 'md:ml-20 pb-20 md:pb-0' : ''} ${isAdminArea ? 'ml-64' : ''}`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />

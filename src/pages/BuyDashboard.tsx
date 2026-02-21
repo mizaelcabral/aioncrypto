@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import UnlimitWidget from '../components/UnlimitWidget';
 import DashboardHeader from '../components/DashboardHeader';
 import TokenCard from '../components/TokenCard';
 
 export default function BuyDashboard() {
+    const location = useLocation();
+    const initialAction = location.state?.action || 'buy';
+
     const [tokens, setTokens] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -38,7 +42,7 @@ export default function BuyDashboard() {
                     <p className="text-text-secondary text-lg mb-8 leading-relaxed">
                         Securely buy, sell, and exchange bridging the gap between traditional banking and crypto via our secure fiat gateway.
                     </p>
-                    <UnlimitWidget />
+                    <UnlimitWidget initialAction={initialAction} />
                 </div>
 
                 {/* Right Column: Grid of Cryptos */}

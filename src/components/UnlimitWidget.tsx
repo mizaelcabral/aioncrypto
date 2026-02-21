@@ -1,9 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ArrowRightLeft } from 'lucide-react';
 
-export default function UnlimitWidget() {
+interface UnlimitWidgetProps {
+    initialAction?: 'buy' | 'sell' | 'swap';
+}
+
+export default function UnlimitWidget({ initialAction = 'buy' }: UnlimitWidgetProps) {
     const [amount] = useState('0.233455');
-    const [action, setAction] = useState<'buy' | 'sell'>('buy');
+    const [action, setAction] = useState<'buy' | 'sell' | 'swap'>(initialAction);
     const [fiat, setFiat] = useState('USD');
+    const [cryptoFrom, setCryptoFrom] = useState('BTC');
+    const [cryptoTo, setCryptoTo] = useState('ETH');
+
+    useEffect(() => {
+        if (initialAction) {
+            setAction(initialAction);
+        }
+    }, [initialAction]);
 
     return (
         <div className="bg-bg-surface rounded-[40px] p-8 border border-white/5 shadow-2xl relative overflow-hidden group">
@@ -25,27 +38,43 @@ export default function UnlimitWidget() {
                     >
                         Sell
                     </button>
+                    <button
+                        className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors flex items-center gap-1 ${action === 'swap' ? 'bg-primary-purple text-white' : 'text-text-secondary hover:text-white'}`}
+                        onClick={() => setAction('swap')}
+                    >
+                        <ArrowRightLeft size={14} /> Swap
+                    </button>
                 </div>
             </div>
 
             <div className="space-y-6">
                 <div>
                     <label className="text-sm text-text-secondary font-medium mb-2 block uppercase tracking-wider">
-                        {action === 'buy' ? 'You Pay' : 'You Sell'}
+                        {action === 'buy' ? 'You Pay' : action === 'swap' ? 'You Swap' : 'You Sell'}
                     </label>
                     <div className="flex bg-[#131128] rounded-2xl p-4 border border-white/5 items-center">
                         <input
                             type="text"
                             className="bg-transparent border-none outline-none flex-1 text-2xl font-bold w-full"
-                            defaultValue={action === 'buy' ? '1,500' : '0.035'}
+                            defaultValue={action === 'buy' ? '1,500' : action === 'swap' ? '0.15' : '0.035'}
                         />
                         <select
                             className="bg-[#282454] border-none outline-none text-white font-bold py-2 px-4 rounded-xl ml-4 cursor-pointer"
-                            onChange={(e) => setFiat(e.target.value)}
-                            value={action === 'buy' ? fiat : 'BTC'}
+                            onChange={(e) => {
+                                if (action === 'swap') setCryptoFrom(e.target.value);
+                                else setFiat(e.target.value);
+                            }}
+                            value={action === 'swap' ? cryptoFrom : action === 'buy' ? fiat : 'BTC'}
                             disabled={action === 'sell'}
                         >
-                            {action === 'buy' ? (
+                            {action === 'swap' ? (
+                                <>
+                                    <option value="BTC">BTC</option>
+                                    <option value="ETH">ETH</option>
+                                    <option value="SOL">SOL</option>
+                                    <option value="XRP">XRP</option>
+                                </>
+                            ) : action === 'buy' ? (
                                 <>
                                     <option value="USD">USD</option>
                                     <option value="EUR">EUR</option>
@@ -60,21 +89,31 @@ export default function UnlimitWidget() {
 
                 <div>
                     <label className="text-sm text-text-secondary font-medium mb-2 block uppercase tracking-wider">
-                        {action === 'buy' ? 'You Receive' : 'You Receive'}
+                        You Receive
                     </label>
                     <div className="flex bg-[#131128] rounded-2xl p-4 border border-white/5 items-center">
                         <input
                             type="text"
                             className="bg-transparent border-none outline-none flex-1 text-2xl font-bold w-full text-primary-purple"
-                            value={action === 'buy' ? amount : '1,480.50'}
+                            value={action === 'buy' ? amount : action === 'swap' ? '2.85' : '1,480.50'}
                             readOnly
                         />
                         <select
                             className="bg-[#282454] border-none outline-none text-white font-bold py-2 px-4 rounded-xl ml-4 cursor-pointer"
-                            value={action === 'buy' ? 'BTC' : fiat}
-                            disabled={action === 'buy'}
+                            onChange={(e) => {
+                                if (action === 'swap') setCryptoTo(e.target.value);
+                            }}
+                            value={action === 'swap' ? cryptoTo : action === 'buy' ? 'BTC' : fiat}
+                            disabled={action !== 'swap'}
                         >
-                            {action === 'buy' ? (
+                            {action === 'swap' ? (
+                                <>
+                                    <option value="ETH">ETH</option>
+                                    <option value="BTC">BTC</option>
+                                    <option value="SOL">SOL</option>
+                                    <option value="XRP">XRP</option>
+                                </>
+                            ) : action === 'buy' ? (
                                 <option value="BTC">BTC</option>
                             ) : (
                                 <>
@@ -85,11 +124,13 @@ export default function UnlimitWidget() {
                             )}
                         </select>
                     </div>
-                    <p className="text-xs text-text-secondary mt-2 text-right">1 BTC = $42,050.00</p>
+                    <p className="text-xs text-text-secondary mt-2 text-right">
+                        {action === 'swap' ? `1 ${cryptoFrom} = 19.34 ${cryptoTo}` : '1 BTC = $42,050.00'}
+                    </p>
                 </div>
 
                 <button className="w-full bg-primary-purple hover:bg-white hover:text-bg-deep text-white font-bold py-4 rounded-xl transition-all shadow-[0_4px_14px_0_rgba(102,57,228,0.39)]">
-                    {action === 'buy' ? 'Buy Crypto' : 'Sell Crypto'}
+                    {action === 'buy' ? 'Buy Crypto' : action === 'swap' ? 'Swap Now' : 'Sell Crypto'}
                 </button>
 
                 <p className="text-xs text-center text-text-secondary mt-4 flex items-center justify-center gap-2">

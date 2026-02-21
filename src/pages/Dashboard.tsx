@@ -1,0 +1,346 @@
+import { useState, useEffect } from 'react';
+import { Search, Plus, X, Loader2, ArrowUpRight, ArrowDownRight, Send, Download, ArrowRightLeft } from 'lucide-react';
+import { Area, AreaChart, ResponsiveContainer, YAxis } from 'recharts';
+import TokenCard from '../components/TokenCard';
+import DashboardHeader from '../components/DashboardHeader';
+
+interface TokenData {
+    id: string;
+    symbol: string;
+    name: string;
+    image: string;
+    current_price: number;
+    price_change_percentage_24h: number;
+    sparkline_in_7d: { price: number[] };
+}
+
+const defaultTokensList = [
+    { id: 'bitcoin', address: '1PRj85hu9RXPZTztko9stfs6nRolvyrQB' },
+    { id: 'ethereum', address: '1M5TdPV8G6YfcKkrNEyhPu3nBpWtGXJGho' },
+    { id: 'ripple', address: '1AGm6Jc43FUaYRkm8wj2cBpJTFWqjxwCXW' },
+    { id: 'litecoin', address: '1P9RQEr2xeE3PEb44ZE35sfZRRW1JHU8qx' },
+    { id: 'dash', address: '14FuM1aBgcNc4Y5TskDBqhwknVpRnxwjbx' },
+    { id: 'solana', address: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZLSB' },
+    { id: 'hedera-hashgraph', address: '0.0.1234567' }
+];
+
+export default function Dashboard() {
+    const [tokensList, setTokensList] = useState(() => {
+        const saved = localStorage.getItem('aion_tokens');
+        if (saved) {
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                return defaultTokensList;
+            }
+        }
+        return defaultTokensList;
+    });
+
+    const [tokens, setTokens] = useState<TokenData[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // Modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+
+    // Save tokensList to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('aion_tokens', JSON.stringify(tokensList));
+    }, [tokensList]);
+
+    useEffect(() => {
+        const fetchTokens = async () => {
+            try {
+                const ids = tokensList.map((t: any) => t.id).join(',');
+                const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=true&price_change_percentage=24h`);
+                if (!response.ok) throw new Error('API Rate Limit or Error');
+                const data = await response.json();
+
+                // Match sorting of the constant list if possible, or just use what CG returns
+                setTokens(data);
+            } catch (err) {
+                console.error("Failed to fetch CoinGecko data. API might be rate limited locally.", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTokens();
+        const interval = setInterval(fetchTokens, 60000);
+        return () => clearInterval(interval);
+    }, [tokensList]);
+
+    // Handle Search
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            if (!searchQuery.trim()) {
+                setSearchResults([]);
+                return;
+            }
+
+            setIsSearching(true);
+            try {
+                const response = await fetch(`https://api.coingecko.com/api/v3/search?query=${searchQuery}`);
+                const data = await response.json();
+                setSearchResults(data.coins?.slice(0, 5) || []);
+            } catch (err) {
+                console.error("Failed to search coins", err);
+            } finally {
+                setIsSearching(false);
+            }
+        }, 500); // 500ms debounce
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    const handleAddToken = (coinId: string) => {
+        // Check if already in list
+        if (!tokensList.find((t: any) => t.id === coinId)) {
+            setTokensList([...tokensList, { id: coinId, address: 'Wallet Address Required' }]);
+        }
+        setIsModalOpen(false);
+        setSearchQuery('');
+    };
+
+    return (
+        <div className="pt-8 px-8 xl:px-12 w-full mx-auto min-h-screen">
+            {/* Dashboard Header */}
+            <DashboardHeader title="Tokens" />
+
+            {/* Wallet Hero Section */}
+            <div className="mb-12 relative rounded-[40px] border border-white/5 bg-gradient-to-br from-[#131128] to-bg-deep p-8 overflow-hidden group">
+                <div className="absolute inset-0 z-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={[{ v: 200 }, { v: 210 }, { v: 195 }, { v: 240 }, { v: 235 }, { v: 280 }, { v: 275 }, { v: 310 }]}>
+                            <YAxis domain={['dataMin', 'dataMax']} hide />
+                            <Area
+                                type="monotone"
+                                dataKey="v"
+                                stroke="#6639E4"
+                                strokeWidth={2}
+                                fill="url(#colorV)"
+                                fillOpacity={1}
+                            />
+                            <defs>
+                                <linearGradient id="colorV" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#6639E4" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#6639E4" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+                    <div>
+                        <p className="text-text-secondary font-medium tracking-wide mb-2">Total Balance</p>
+                        <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tight">$24,562.00</h2>
+                        <div className="flex items-center gap-2 mt-4">
+                            <span className="bg-green-500/20 text-green-500 border border-green-500/30 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                                <ArrowUpRight size={16} /> +5.24%
+                            </span>
+                            <span className="text-text-secondary text-sm">vs last 24h</span>
+                        </div>
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div className="flex bg-[#100e23]/80 backdrop-blur-md p-2 rounded-3xl border border-white/10 gap-2">
+                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                            <div className="w-10 h-10 rounded-full bg-primary-purple flex items-center justify-center text-white shadow-lg shadow-primary-purple/20">
+                                <ArrowUpRight size={20} />
+                            </div>
+                            <span className="text-xs font-semibold">Buy</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                                <ArrowDownRight size={20} />
+                            </div>
+                            <span className="text-xs font-semibold">Sell</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                                <ArrowRightLeft size={20} />
+                            </div>
+                            <span className="text-xs font-semibold">Swap</span>
+                        </button>
+                        <div className="w-px h-12 bg-white/10 self-center mx-2" />
+                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                                <Send size={20} />
+                            </div>
+                            <span className="text-xs font-semibold">Send</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-white/5 transition-colors text-text-secondary hover:text-white min-w-[72px]">
+                            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                                <Download size={20} />
+                            </div>
+                            <span className="text-xs font-semibold">Receive</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-col xl:flex-row gap-8 pb-12">
+                {/* Left Column: Assets Grid */}
+                <div className="flex-1">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-xl font-bold">Your Assets</h3>
+                    </div>
+
+                    {/* Tokens Grid layout matching the provided image */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-12">
+                        {loading
+                            ? Array.from({ length: 4 }).map((_, i) => <TokenCard key={i} isLoading={true} name="" symbol="" price={0} change24h={0} walletAddress="" sparklineData={[]} />)
+                            : tokens.map((token) => {
+                                const staticData = tokensList.find((t: any) => t.id === token.id);
+                                return (
+                                    <TokenCard
+                                        key={token.id}
+                                        name={token.name}
+                                        symbol={token.symbol}
+                                        price={token.current_price}
+                                        change24h={token.price_change_percentage_24h}
+                                        walletAddress={staticData?.address || "Address hidden"}
+                                        iconUrl={token.image}
+                                        sparklineData={token.sparkline_in_7d?.price || []}
+                                    />
+                                );
+                            })
+                        }
+
+                        {/* Add Token Placeholder Box */}
+                        <div
+                            onClick={() => setIsModalOpen(true)}
+                            className="relative flex flex-col items-center justify-center p-6 rounded-3xl border border-dashed border-white/10 bg-white/5 text-text-secondary hover:text-white hover:border-primary-purple/50 hover:bg-primary-purple/10 transition-all cursor-pointer min-h-[180px]"
+                        >
+                            <Plus size={48} className="font-thin mb-4 opacity-50 group-hover:opacity-100 transition-opacity" strokeWidth={1} />
+                            <span className="font-medium tracking-wide">Add Token</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Column: Recent Transactions */}
+                <div className="w-full xl:w-[400px] shrink-0">
+                    <h3 className="text-xl font-bold mb-6">Recent Transactions</h3>
+                    <div className="bg-[#131128]/50 backdrop-blur-md rounded-3xl border border-white/5 p-6 flex flex-col gap-6">
+                        {/* Mock Transaction Items */}
+                        <div className="flex items-center justify-between group cursor-pointer">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
+                                    <Download size={20} />
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-white">Received Bitcoin</div>
+                                    <div className="text-sm text-text-secondary">2 hours ago</div>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <div className="font-semibold text-white">+0.001 BTC</div>
+                                <div className="text-sm text-green-500">+$45.00</div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between group cursor-pointer">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                    <Send size={20} />
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-white">Sent Ethereum</div>
+                                    <div className="text-sm text-text-secondary">Yesterday</div>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <div className="font-semibold text-white">-0.05 ETH</div>
+                                <div className="text-sm text-red-500">-$150.00</div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between group cursor-pointer">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-primary-purple/10 text-primary-purple flex items-center justify-center group-hover:bg-primary-purple group-hover:text-white transition-colors">
+                                    <ArrowRightLeft size={20} />
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-white">Swapped USDT for SOL</div>
+                                    <div className="text-sm text-text-secondary">3 days ago</div>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <div className="font-semibold text-white">-100 USDT</div>
+                                <div className="text-sm text-white">~1.5 SOL</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Add Token Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="bg-[#131128] rounded-[24px] w-full max-w-md border border-white/10 shadow-2xl flex flex-col pt-8 pb-4">
+                        <div className="flex justify-between items-center px-8 mb-6">
+                            <h2 className="text-xl font-bold text-white">Add New Token</h2>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="text-text-secondary hover:text-white transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <div className="px-8 mb-4">
+                            <div className="relative">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                                <input
+                                    type="text"
+                                    placeholder="Search by name or symbol (e.g. Dogecoin)"
+                                    className="w-full bg-white/5 rounded-xl py-4 pl-12 pr-4 text-white outline-none border border-white/10 focus:border-primary-purple focus:bg-white/10 transition-all font-medium"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto max-h-[300px] px-4 space-y-1">
+                            {isSearching ? (
+                                <div className="p-8 flex justify-center text-text-secondary items-center gap-3">
+                                    <Loader2 className="animate-spin w-5 h-5" /> Searching...
+                                </div>
+                            ) : searchResults.length > 0 ? (
+                                searchResults.map(coin => (
+                                    <button
+                                        key={coin.id}
+                                        onClick={() => handleAddToken(coin.id)}
+                                        className="w-full text-left p-4 hover:bg-white/5 rounded-xl transition-colors flex items-center justify-between group"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <img src={coin.thumb} alt={coin.name} className="w-8 h-8 rounded-full" />
+                                            <div>
+                                                <div className="font-bold text-white group-hover:text-primary-purple transition-colors">{coin.name}</div>
+                                                <div className="text-xs text-text-secondary uppercase">{coin.symbol}</div>
+                                            </div>
+                                        </div>
+                                        <Plus className="w-5 h-5 text-text-secondary group-hover:text-primary-purple opacity-0 group-hover:opacity-100 transition-all" />
+                                    </button>
+                                ))
+                            ) : searchQuery ? (
+                                <div className="p-8 text-center text-text-secondary">
+                                    No tokens found
+                                </div>
+                            ) : (
+                                <div className="p-8 text-center text-text-secondary/50">
+                                    Type a token name to search CoinGecko
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-deep: #131128;
+  --color-bg-surface: #282454;
+  --color-primary-purple: #6639E4;
+  --color-text-secondary: #666977;
+  --font-sans: "Poppins", sans-serif;
+  --radius-card: 40px;
+  --radius-button: 80px;
+}
+
+body {
+  background-color: var(--color-bg-deep);
+  color: white;
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .glass-card {
+    background: rgba(40, 36, 84, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}

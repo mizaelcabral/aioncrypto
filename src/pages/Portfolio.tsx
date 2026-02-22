@@ -137,7 +137,7 @@ export default function Portfolio() {
                             <TrendingUp className="text-primary-purple" size={24} />
                             Performance
                         </h3>
-                        <div className="flex bg-[#100e23] rounded-full p-1 border border-white/5">
+                        <div className="flex flex-wrap sm:flex-nowrap justify-center bg-[#100e23] rounded-2xl sm:rounded-full p-1 border border-white/5 w-full sm:w-auto">
                             {['1H', '1D', '1W', '1M', '1Y', 'ALL'].map(tf => (
                                 <button
                                     key={tf}
@@ -204,7 +204,7 @@ export default function Portfolio() {
                     </div>
 
                     {/* Allocation Legend */}
-                    <div className="mt-6 grid grid-cols-2 gap-4">
+                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {allocationData.map((item) => (
                             <div key={item.name} className="flex items-center gap-3">
                                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>

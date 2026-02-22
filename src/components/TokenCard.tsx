@@ -55,7 +55,7 @@ export default function TokenCard({
         <div className="bg-bg-surface rounded-card p-6 border border-white/5 flex flex-col justify-between hover:-translate-y-1 transition-transform group shadow-lg">
 
             {/* Header */}
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                     {iconUrl ? (
                         <img src={iconUrl} alt={name} className="w-10 h-10 rounded-full bg-white/5 p-1" />

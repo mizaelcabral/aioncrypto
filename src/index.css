@@ -20,6 +20,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@layer base {
+
+  /* Adiciona a "mãozinha" globalmente em chamadas pra ação (CTAs) */
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  a,
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* Mantém o cursor proibido caso esteja desabilitado */
+  button:disabled,
+  [role="button"]:disabled,
+  input:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+}
+
 @layer utilities {
   .glass-card {
     background: rgba(40, 36, 84, 0.7);

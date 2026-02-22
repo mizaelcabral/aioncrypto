@@ -137,12 +137,12 @@ export default function Portfolio() {
                             <TrendingUp className="text-primary-purple" size={24} />
                             Performance
                         </h3>
-                        <div className="flex flex-wrap sm:flex-nowrap justify-center bg-[#100e23] rounded-2xl sm:rounded-full p-1 border border-white/5 w-full sm:w-auto">
+                        <div className="flex overflow-x-auto hide-scrollbar sm:flex-nowrap justify-start sm:justify-center bg-[#100e23] rounded-2xl sm:rounded-full p-1 border border-white/5 w-full sm:w-auto">
                             {['1H', '1D', '1W', '1M', '1Y', 'ALL'].map(tf => (
                                 <button
                                     key={tf}
                                     onClick={() => setTimeframe(tf)}
-                                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${timeframe === tf ? 'bg-primary-purple text-white shadow-lg shadow-primary-purple/30' : 'text-text-secondary hover:text-white'}`}
+                                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 ${timeframe === tf ? 'bg-primary-purple text-white shadow-lg shadow-primary-purple/30' : 'text-text-secondary hover:text-white'}`}
                                 >
                                     {tf}
                                 </button>
@@ -184,8 +184,8 @@ export default function Portfolio() {
                                     data={allocationData}
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={70}
-                                    outerRadius={90}
+                                    innerRadius="65%"
+                                    outerRadius="85%"
                                     paddingAngle={5}
                                     dataKey="value"
                                     stroke="none"
@@ -222,7 +222,8 @@ export default function Portfolio() {
             <div className="bg-[#131128]/80 backdrop-blur-md rounded-3xl p-6 border border-white/5">
                 <h3 className="text-xl font-bold mb-6">Your Holdings</h3>
 
-                <div className="overflow-x-auto">
+                {/* Desktop and Tablet View */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[600px]">
                         <thead>
                             <tr className="text-text-secondary text-sm border-b border-white/10">
@@ -263,6 +264,45 @@ export default function Portfolio() {
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile View: Cards Layout */}
+                <div className="md:hidden flex flex-col gap-4">
+                    {portfolioAssets.map((asset) => (
+                        <div key={asset.id} className="bg-[#100e23] rounded-2xl p-4 border border-white/5 flex flex-col gap-4">
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-xs" style={{ backgroundColor: asset.color }}>
+                                        {asset.symbol[0]}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-white leading-tight">{asset.name}</p>
+                                        <p className="text-sm text-text-secondary">{asset.symbol}</p>
+                                    </div>
+                                </div>
+                                <div className={`inline-flex items-center gap-1 font-bold ${asset.change >= 0 ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'} px-2 py-1 rounded text-sm`}>
+                                    {asset.change >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                                    {Math.abs(asset.change)}%
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-text-secondary text-xs mb-1">Price</p>
+                                    <p className="text-white font-medium">${asset.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-text-secondary text-xs mb-1">Balance</p>
+                                    <p className="font-bold text-white">{asset.balance} {asset.symbol}</p>
+                                </div>
+                            </div>
+
+                            <div className="pt-3 border-t border-white/5 flex justify-between items-center">
+                                <span className="text-text-secondary text-sm">Total Value</span>
+                                <span className="text-white font-bold text-lg">${asset.value.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

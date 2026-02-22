@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Search, Bell, User, LogOut, Settings as SettingsIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 interface DashboardHeaderProps {
     title: string;
@@ -11,6 +12,8 @@ interface DashboardHeaderProps {
 export default function DashboardHeader({ title, className = 'mb-8' }: DashboardHeaderProps) {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isNotifOpen, setIsNotifOpen] = useState(false);
+    const [fullName, setFullName] = useState<string>('');
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const profileRef = useRef<HTMLDivElement>(null);
     const notifRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
@@ -30,10 +33,52 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    // Fetch user profile data
+    useEffect(() => {
+        if (user) {
+            const fetchProfile = async () => {
+                const { data } = await supabase
+                    .from('profiles')
+                    .select('full_name, avatar_url')
+                    .eq('id', user.id)
+                    .single();
+
+                if (data) {
+                    setFullName(data.full_name || '');
+                    setAvatarUrl(data.avatar_url || null);
+                }
+            };
+            fetchProfile();
+
+            // Realtime subscription to profile changes
+            const channel = supabase.channel('custom-all-channel')
+                .on(
+                    'postgres_changes',
+                    { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` },
+                    (payload) => {
+                        const newProfile = payload.new as any;
+                        setFullName(newProfile.full_name || '');
+                        setAvatarUrl(newProfile.avatar_url || null);
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
+        }
+    }, [user]);
+
     const handleLogout = async () => {
         await signOut();
         navigate('/login');
     };
+
+    const getInitials = (nameStr: string) => {
+        return nameStr ? nameStr.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'US';
+    };
+
+    const displayName = fullName || user?.email?.split('@')[0] || 'User';
 
     return (
         <header className={`flex items-center justify-between py-2 md:py-4 ${className}`}>
@@ -93,17 +138,25 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
                         onClick={() => { setIsProfileOpen(!isProfileOpen); setIsNotifOpen(false); }}
                         className="flex items-center gap-2 md:gap-3 bg-[rgba(40,36,84,0.4)] py-1.5 px-2 rounded-full cursor-pointer hover:bg-[rgba(40,36,84,0.6)] transition-all border border-white/5 hover:border-primary-purple/30 group"
                     >
-                        <span className="hidden sm:block text-sm font-medium pl-3 text-text-secondary group-hover:text-white transition-colors">Sophie Moore</span>
-                        <div className="w-8 h-8 rounded-full bg-primary-purple flex items-center justify-center font-bold text-sm text-white shadow-[0_0_10px_rgba(102,57,228,0.5)] shrink-0">
-                            SM
-                        </div>
+                        <span className="hidden sm:block text-sm font-medium pl-3 pr-1 text-text-secondary group-hover:text-white transition-colors capitalize truncate max-w-[120px]">{displayName}</span>
+                        {avatarUrl ? (
+                            <img
+                                src={avatarUrl}
+                                alt="Avatar"
+                                className="w-8 h-8 rounded-full object-cover shadow-[0_0_10px_rgba(102,57,228,0.5)] shrink-0"
+                            />
+                        ) : (
+                            <div className="w-8 h-8 rounded-full bg-primary-purple flex items-center justify-center font-bold text-sm text-white shadow-[0_0_10px_rgba(102,57,228,0.5)] shrink-0">
+                                {getInitials(displayName)}
+                            </div>
+                        )}
                     </div>
 
                     {isProfileOpen && (
                         <div className="absolute right-0 mt-3 w-56 bg-[#131128] rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] py-2 z-50 overflow-hidden">
                             <div className="px-4 py-3 border-b border-white/5 mb-1 bg-white/[0.02]">
-                                <p className="text-sm font-bold text-white">Gestor / Paciente</p>
-                                <p className="text-xs text-text-secondary truncate">{user?.email || 'usuario@rootcare.com'}</p>
+                                <p className="text-sm font-bold text-white capitalize truncate">{displayName}</p>
+                                <p className="text-xs text-text-secondary truncate">{user?.email}</p>
                             </div>
 
                             <button
@@ -134,3 +187,4 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
         </header>
     );
 }
+

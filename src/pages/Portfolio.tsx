@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DashboardHeader from '../components/DashboardHeader';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Briefcase, PieChart as PieChartIcon } from 'lucide-react';
+import { TrendingUp, ArrowUpRight, ArrowDownRight, Briefcase, PieChart as PieChartIcon } from 'lucide-react';
 
 const performanceData = [
     { name: '1', value: 21000 },

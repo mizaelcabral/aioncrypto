@@ -31,7 +31,7 @@ export default function Dashboard() {
         if (saved) {
             try {
                 return JSON.parse(saved);
-            } catch (e) {
+            } catch {
                 return defaultTokensList;
             }
         }
@@ -44,7 +44,7 @@ export default function Dashboard() {
     // Modal state
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [searchResults, setSearchResults] = useState<{ id: string; name: string; symbol: string; thumb: string }[]>([]);
     const [isSearching, setIsSearching] = useState(false);
 
     // Toast and Navigation
@@ -64,7 +64,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchTokens = async () => {
             try {
-                const ids = tokensList.map((t: any) => t.id).join(',');
+                const ids = tokensList.map((t: { id: string }) => t.id).join(',');
                 const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=true&price_change_percentage=24h`);
                 if (!response.ok) throw new Error('API Rate Limit or Error');
                 const data = await response.json();
@@ -108,7 +108,7 @@ export default function Dashboard() {
 
     const handleAddToken = (coinId: string) => {
         // Check if already in list
-        if (!tokensList.find((t: any) => t.id === coinId)) {
+        if (!tokensList.find((t: { id: string }) => t.id === coinId)) {
             setTokensList([...tokensList, { id: coinId, address: 'Wallet Address Required' }]);
         }
         setIsModalOpen(false);
@@ -211,32 +211,28 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="flex flex-col xl:flex-row gap-8 pb-12">
-                {/* Left Column: Assets Grid */}
-                <div className="flex-1">
+            <div className="flex flex-col gap-8 pb-12">
+                {/* Full Width: Assets Grid */}
+                <div className="w-full">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="text-xl font-bold">Your Assets</h3>
                     </div>
 
-                    {/* Tokens Grid layout matching the provided image */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 pb-12">
+                    {/* Tokens Grid layout expanding full width (Max 4 cols) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6">
                         {loading
-                            ? Array.from({ length: 4 }).map((_, i) => <TokenCard key={i} isLoading={true} name="" symbol="" price={0} change24h={0} walletAddress="" sparklineData={[]} />)
-                            : tokens.map((token) => {
-                                const staticData = tokensList.find((t: any) => t.id === token.id);
-                                return (
-                                    <TokenCard
-                                        key={token.id}
-                                        name={token.name}
-                                        symbol={token.symbol}
-                                        price={token.current_price}
-                                        change24h={token.price_change_percentage_24h}
-                                        walletAddress={staticData?.address || "Address hidden"}
-                                        iconUrl={token.image}
-                                        sparklineData={token.sparkline_in_7d?.price || []}
-                                    />
-                                );
-                            })
+                            ? Array.from({ length: 5 }).map((_, i) => <TokenCard key={i} isLoading={true} name="" symbol="" price={0} change24h={0} sparklineData={[]} />)
+                            : tokens.map((token) => (
+                                <TokenCard
+                                    key={token.id}
+                                    name={token.name}
+                                    symbol={token.symbol}
+                                    price={token.current_price}
+                                    change24h={token.price_change_percentage_24h}
+                                    iconUrl={token.image}
+                                    sparklineData={token.sparkline_in_7d?.price || []}
+                                />
+                            ))
                         }
 
                         {/* Add Token Placeholder Box */}
@@ -250,74 +246,88 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* Right Column: Recent Transactions */}
-                <div className="w-full xl:w-[400px] shrink-0">
-                    <h3 className="text-xl font-bold mb-6">Recent Transactions</h3>
-                    <div className="bg-[#131128]/50 backdrop-blur-md rounded-3xl border border-white/5 p-6 flex flex-col gap-6">
-                        {/* Mock Transaction Items */}
-                        <div className="flex items-center justify-between group cursor-pointer">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
-                                    <Download size={20} />
+                {/* Bottom Section: Transactions & Trending */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    {/* Recent Transactions */}
+                    <div className="w-full">
+                        <h3 className="text-xl font-bold mb-6">Recent Transactions</h3>
+                        <div className="bg-[#131128]/50 backdrop-blur-md rounded-3xl border border-white/5 p-6 flex flex-col gap-6 h-full">
+                            {/* Mock Transaction Items */}
+                            <div className="flex items-center justify-between group cursor-pointer">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
+                                        <Download size={20} />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-white">Received Bitcoin</div>
+                                        <div className="text-sm text-text-secondary">2 hours ago</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="font-semibold text-white">Received Bitcoin</div>
-                                    <div className="text-sm text-text-secondary">2 hours ago</div>
+                                <div className="text-right">
+                                    <div className="font-semibold text-white">+0.001 BTC</div>
+                                    <div className="text-sm text-green-500">+$45.00</div>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <div className="font-semibold text-white">+0.001 BTC</div>
-                                <div className="text-sm text-green-500">+$45.00</div>
-                            </div>
-                        </div>
 
-                        <div className="flex items-center justify-between group cursor-pointer">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
-                                    <Send size={20} />
+                            <div className="flex items-center justify-between group cursor-pointer">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                        <Send size={20} />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-white">Sent Ethereum</div>
+                                        <div className="text-sm text-text-secondary">Yesterday</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="font-semibold text-white">Sent Ethereum</div>
-                                    <div className="text-sm text-text-secondary">Yesterday</div>
+                                <div className="text-right">
+                                    <div className="font-semibold text-white">-0.05 ETH</div>
+                                    <div className="text-sm text-red-500">-$150.00</div>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <div className="font-semibold text-white">-0.05 ETH</div>
-                                <div className="text-sm text-red-500">-$150.00</div>
-                            </div>
-                        </div>
 
-                        <div className="flex items-center justify-between group cursor-pointer">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary-purple/10 text-primary-purple flex items-center justify-center group-hover:bg-primary-purple group-hover:text-white transition-colors">
-                                    <ArrowRightLeft size={20} />
+                            <div className="flex items-center justify-between group cursor-pointer">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-primary-purple/10 text-primary-purple flex items-center justify-center group-hover:bg-primary-purple group-hover:text-white transition-colors">
+                                        <ArrowRightLeft size={20} />
+                                    </div>
+                                    <div>
+                                        <div className="font-semibold text-white">Swapped USDT for SOL</div>
+                                        <div className="text-sm text-text-secondary">3 days ago</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="font-semibold text-white">Swapped USDT for SOL</div>
-                                    <div className="text-sm text-text-secondary">3 days ago</div>
+                                <div className="text-right">
+                                    <div className="font-semibold text-white">-100 USDT</div>
+                                    <div className="text-sm text-white">~1.5 SOL</div>
                                 </div>
-                            </div>
-                            <div className="text-right">
-                                <div className="font-semibold text-white">-100 USDT</div>
-                                <div className="text-sm text-white">~1.5 SOL</div>
                             </div>
                         </div>
                     </div>
 
                     {/* Trending Assets Filler */}
-                    <h3 className="text-xl font-bold mb-6 mt-12">Trending Assets</h3>
-                    <div className="bg-[#131128]/50 backdrop-blur-md rounded-3xl border border-white/5 p-6 flex flex-col gap-6">
-                        <div className="flex items-center justify-between">
-                            <span className="text-white font-semibold">Solana</span>
-                            <span className="text-green-500 bg-green-500/10 px-2 py-1 rounded-full text-xs font-bold">+12.4%</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-white font-semibold">Avalanche</span>
-                            <span className="text-green-500 bg-green-500/10 px-2 py-1 rounded-full text-xs font-bold">+8.2%</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-white font-semibold">Polkadot</span>
-                            <span className="text-red-500 bg-red-500/10 px-2 py-1 rounded-full text-xs font-bold">-1.5%</span>
+                    <div className="w-full">
+                        <h3 className="text-xl font-bold mb-6">Trending Assets</h3>
+                        <div className="bg-[#131128]/50 backdrop-blur-md rounded-3xl border border-white/5 p-6 flex flex-col gap-6 h-full justify-center">
+                            <div className="flex items-center justify-between">
+                                <span className="text-white font-semibold flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-[#131128] flex items-center justify-center font-bold text-xs border border-white/10 text-[#14F195]">S</div>
+                                    Solana
+                                </span>
+                                <span className="text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full text-xs font-bold">+12.4%</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-white font-semibold flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-[#131128] flex items-center justify-center font-bold text-xs border border-white/10 text-red-500">A</div>
+                                    Avalanche
+                                </span>
+                                <span className="text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full text-xs font-bold">+8.2%</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-white font-semibold flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-[#131128] flex items-center justify-center font-bold text-xs border border-white/10 text-pink-500">P</div>
+                                    Polkadot
+                                </span>
+                                <span className="text-red-500 bg-red-500/10 px-3 py-1.5 rounded-full text-xs font-bold">-1.5%</span>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import DashboardHeader from '../components/DashboardHeader';
 import { User, Mail, Phone, Shield, Save, CheckCircle2, Upload, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -16,14 +16,7 @@ export default function Settings() {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        if (user) {
-            setEmail(user.email || '');
-            fetchProfile();
-        }
-    }, [user]);
-
-    const fetchProfile = async () => {
+    const fetchProfile = useCallback(async () => {
         if (!user) return;
         try {
             const { data, error } = await supabase
@@ -41,7 +34,14 @@ export default function Settings() {
         } catch (error) {
             console.error('Error fetching profile:', error);
         }
-    };
+    }, [user]);
+
+    useEffect(() => {
+        if (user) {
+            setEmail(user.email || '');
+            fetchProfile();
+        }
+    }, [user, fetchProfile]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();

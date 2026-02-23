@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function UnlimitWidget() {
@@ -11,7 +11,7 @@ export default function UnlimitWidget() {
     const [isLoading, setIsLoading] = useState(false);
 
     // Mock API call to get quote from our custom backend (which will talk to Unlimit)
-    const getQuote = () => {
+    const getQuote = useCallback(() => {
         setIsLoading(true);
         setTimeout(() => {
             if (action === 'buy') {
@@ -23,14 +23,14 @@ export default function UnlimitWidget() {
             }
             setIsLoading(false);
         }, 1200);
-    };
+    }, [action, fiatAmount, cryptoAmount]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             getQuote();
         }, 800);
         return () => clearTimeout(timeoutId);
-    }, [fiatAmount, cryptoAmount, action, fiatCurrency, cryptoCurrency]);
+    }, [getQuote, fiatCurrency, cryptoCurrency]);
 
     const handleTransaction = async () => {
         if (!user) {

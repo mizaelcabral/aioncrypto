@@ -29,7 +29,7 @@ export default function AdminRoute() {
                 } else {
                     setIsAdmin(profile.role === 'admin');
                 }
-            } catch (err) {
+            } catch {
                 setIsAdmin(false);
             } finally {
                 setLoading(false);

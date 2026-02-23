@@ -56,7 +56,7 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
                     'postgres_changes',
                     { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` },
                     (payload) => {
-                        const newProfile = payload.new as any;
+                        const newProfile = payload.new as { full_name?: string; avatar_url?: string };
                         setFullName(newProfile.full_name || '');
                         setAvatarUrl(newProfile.avatar_url || null);
                     }

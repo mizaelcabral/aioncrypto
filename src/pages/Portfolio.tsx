@@ -28,37 +28,46 @@ const portfolioAssets = [
     { id: 4, name: 'Ripple', symbol: 'XRP', balance: 694.4, price: 1.44, value: 1000, change: 0.5, color: '#23292F' },
 ];
 
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: { value: number }[];
+    label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-[#131128]/90 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl">
+                <p className="text-text-secondary text-xs mb-1">Day {label}</p>
+                <p className="text-white font-bold">${payload[0].value.toLocaleString()}</p>
+            </div>
+        );
+    }
+    return null;
+};
+
+interface PieTooltipProps {
+    active?: boolean;
+    payload?: { name: string; value: number; payload: { color: string } }[];
+}
+
+const PieTooltip = ({ active, payload }: PieTooltipProps) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-[#131128]/90 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
+                <div>
+                    <p className="text-white font-bold">{payload[0].name}</p>
+                    <p className="text-text-secondary text-xs">${payload[0].value.toLocaleString()}</p>
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
 export default function Portfolio() {
     const [timeframe, setTimeframe] = useState('1M');
-
-    // Custom Tooltip for the Performance Chart
-    const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-[#131128]/90 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl">
-                    <p className="text-text-secondary text-xs mb-1">Day {label}</p>
-                    <p className="text-white font-bold">${payload[0].value.toLocaleString()}</p>
-                </div>
-            );
-        }
-        return null;
-    };
-
-    // Custom Tooltip for the Pie Chart
-    const PieTooltip = ({ active, payload }: any) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-[#131128]/90 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
-                    <div>
-                        <p className="text-white font-bold">{payload[0].name}</p>
-                        <p className="text-text-secondary text-xs">${payload[0].value.toLocaleString()}</p>
-                    </div>
-                </div>
-            );
-        }
-        return null;
-    };
 
     return (
         <div className="pt-4 md:pt-8 px-4 md:px-8 xl:px-12 w-full max-w-[1800px] mx-auto min-h-screen pb-24 md:pb-12 pt-safe">

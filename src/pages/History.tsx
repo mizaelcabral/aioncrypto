@@ -131,18 +131,18 @@ export default function History() {
     });
 
     return (
-        <div className="pt-4 md:pt-8 px-4 md:px-8 xl:px-12 w-full max-w-[1800px] mx-auto min-h-screen pb-24 md:pb-12 pt-safe relative">
+        <div className="pt-4 md:pt-8 px-3 sm:px-4 md:px-8 xl:px-12 w-full max-w-[1800px] mx-auto min-h-screen pb-24 md:pb-12 pt-safe relative">
             {/* Background Glow */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-purple/5 blur-[120px] rounded-full pointer-events-none" />
 
             <DashboardHeader title="Transaction History" className="mb-6 md:mb-12 relative z-10" />
 
-            <div className="bg-[#131128]/80 backdrop-blur-md rounded-3xl p-6 border border-white/5 relative z-10 shadow-2xl">
+            <div className="bg-[#131128]/80 backdrop-blur-md rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-6 border border-white/5 relative z-10 shadow-2xl">
 
                 {/* Search and Filters */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-                    <div className="flex items-center gap-4 w-full md:w-auto">
-                        <div className="relative flex-1 md:w-80">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 w-full min-w-0">
+                    <div className="flex items-center gap-4 w-full md:w-auto min-w-0">
+                        <div className="relative flex-1 min-w-0 md:w-80">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
                             <input
                                 type="text"
@@ -158,14 +158,14 @@ export default function History() {
                         </button>
                     </div>
 
-                    <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
-                        {['all', 'receive', 'send', 'swap', 'buy', 'sell'].map(type => (
+                    <div className="flex gap-2 overflow-x-auto w-full max-w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
+                        {['all', 'receive', 'send', 'buy', 'sell'].map(type => (
                             <button
                                 key={type}
                                 onClick={() => setFilterType(type)}
                                 className={`px-4 py-2 rounded-full text-xs font-bold capitalize whitespace-nowrap transition-all ${filterType === type
-                                        ? 'bg-primary-purple text-white shadow-lg shadow-primary-purple/30'
-                                        : 'bg-[#100e23] text-text-secondary border border-white/5 hover:border-white/20 hover:text-white'
+                                    ? 'bg-primary-purple text-white shadow-lg shadow-primary-purple/30'
+                                    : 'bg-[#100e23] text-text-secondary border border-white/5 hover:border-white/20 hover:text-white'
                                     }`}
                             >
                                 {type}
@@ -246,9 +246,9 @@ export default function History() {
                 </div>
 
                 {/* Mobile View (Cards) */}
-                <div className="md:hidden space-y-4">
+                <div className="md:hidden space-y-3">
                     {filteredTransactions.map((tx) => (
-                        <div key={tx.id} className="bg-[#100e23] border border-white/5 rounded-2xl p-4 flex flex-col gap-4">
+                        <div key={tx.id} className="bg-[#100e23] border border-white/5 rounded-2xl p-3 flex flex-col gap-3">
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3">
                                     {getTransactionIcon(tx.type)}
@@ -264,16 +264,16 @@ export default function History() {
                                 </span>
                             </div>
 
-                            <div className="bg-[#131128] rounded-xl p-3 border border-white/5">
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-xs text-text-secondary">Amount</span>
-                                    <span className="font-bold text-sm text-white">
+                            <div className="bg-[#131128] rounded-xl p-2 sm:p-3 border border-white/5">
+                                <div className="flex justify-between items-center mb-1 gap-2">
+                                    <span className="text-xs text-text-secondary whitespace-nowrap shrink-0">Amount</span>
+                                    <span className="font-bold text-sm text-white text-right break-words min-w-0">
                                         {tx.type === 'swap' ? `${tx.toAmount} ${tx.toSymbol}` : `${tx.type === 'send' || tx.type === 'sell' ? '-' : '+'}${tx.amount} ${tx.symbol}`}
                                     </span>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-xs text-text-secondary">Value</span>
-                                    <span className="text-xs text-text-secondary">${tx.valueUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                <div className="flex justify-between items-center gap-2">
+                                    <span className="text-xs text-text-secondary whitespace-nowrap shrink-0">Value</span>
+                                    <span className="text-xs text-text-secondary text-right break-words min-w-0">${tx.valueUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 </div>
                             </div>
 

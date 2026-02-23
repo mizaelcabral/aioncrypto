@@ -22,7 +22,7 @@ function AppLayout() {
   const isAdminArea = location.pathname.startsWith('/admin');
 
   return (
-    <div className={`min-h-[100dvh] bg-bg-deep text-white font-sans selection:bg-primary-purple selection:text-white flex`}>
+    <div className={`min-h-[100dvh] bg-bg-deep text-white font-sans selection:bg-primary-purple selection:text-white flex overflow-x-hidden w-full max-w-[100vw]`}>
       {!isAdminArea && (isDashboardArea ? (
         <>
           <Sidebar />
@@ -31,7 +31,7 @@ function AppLayout() {
       ) : <Navbar />)}
       {isAdminArea && <AdminSidebar />}
 
-      <main className={`flex-1 flex flex-col min-h-screen ${isDashboardArea ? 'md:ml-20 pb-20 md:pb-0' : ''} ${isAdminArea ? 'ml-64' : ''}`}>
+      <main className={`flex-1 flex flex-col min-h-screen ${isDashboardArea ? 'md:ml-20 pb-20 md:pb-0' : ''} ${isAdminArea ? 'ml-64' : ''} w-full max-w-full overflow-x-hidden`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

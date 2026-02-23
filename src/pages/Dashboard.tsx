@@ -211,7 +211,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-8 pb-12">
+            <div className="flex flex-col gap-4 md:gap-8 pb-12">
                 {/* Full Width: Assets Grid */}
                 <div className="w-full">
                     <div className="flex justify-between items-center mb-6">

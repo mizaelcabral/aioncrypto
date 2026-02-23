@@ -44,11 +44,11 @@ export default function UnlimitWidget() {
     };
 
     return (
-        <div className="bg-bg-surface rounded-[40px] p-6 border border-white/5 shadow-2xl relative overflow-hidden group min-h-[500px] flex flex-col">
+        <div className="bg-bg-surface rounded-[32px] md:rounded-[40px] p-5 md:p-8 lg:p-10 border border-white/5 shadow-2xl relative overflow-hidden group min-h-[500px] flex flex-col">
             {/* Decorative Glow */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary-purple/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-            <div className="flex justify-between items-center mb-6 relative z-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8 relative z-10">
                 <h3 className="text-2xl font-bold">Fiat Gateway</h3>
                 <div className="flex bg-[#100e23] rounded-full p-1 border border-white/5">
                     <button

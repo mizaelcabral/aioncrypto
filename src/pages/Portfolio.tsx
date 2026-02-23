@@ -217,7 +217,7 @@ export default function Portfolio() {
                         {allocationData.map((item) => (
                             <div key={item.name} className="flex items-center gap-3">
                                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                                <div className="flex-1 flex justify-between items-center">
+                                <div className="flex-1 flex justify-between items-center pr-2 sm:pr-0">
                                     <span className="text-sm font-medium text-white">{item.name}</span>
                                     <span className="text-xs text-text-secondary ml-2">{Math.round((item.value / 24562) * 100)}%</span>
                                 </div>

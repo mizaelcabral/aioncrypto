@@ -81,9 +81,9 @@ export default function DashboardHeader({ title, className = 'mb-8' }: Dashboard
     const displayName = fullName || user?.email?.split('@')[0] || 'User';
 
     return (
-        <header className={`flex items-center justify-between py-2 md:py-4 ${className}`}>
-            <div className="flex items-center gap-4 md:gap-6">
-                <h1 className="text-xl md:text-3xl font-bold truncate">{title}</h1>
+        <header className={`flex items-center justify-between py-2 md:py-4 w-full ${className}`}>
+            <div className="flex items-center gap-4 md:gap-6 flex-1 min-w-0">
+                <h1 className="text-xl md:text-3xl font-bold truncate min-w-0">{title}</h1>
                 <div className="relative hidden lg:block">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
                     <input

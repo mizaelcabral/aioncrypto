@@ -149,7 +149,7 @@ export default function Settings() {
                     </button>
 
                     {/* Creative Security Banner (PRO MAX Glassmorphism) */}
-                    <div className="mt-8 bg-gradient-to-br from-[#1a1736] to-[#131128] border border-white/10 rounded-[32px] p-6 relative overflow-hidden group shadow-2xl">
+                    <div className="hidden lg:flex mt-8 bg-gradient-to-br from-[#1a1736] to-[#131128] border border-white/10 rounded-[32px] p-6 relative overflow-hidden group shadow-2xl flex-col gap-4">
                         {/* Dramatic Glow Effects */}
                         <div className="absolute top-[-20px] right-[-20px] w-32 h-32 bg-primary-purple/30 blur-[50px] rounded-full pointer-events-none group-hover:bg-primary-purple/40 group-hover:blur-[60px] transition-all duration-700" />
                         <div className="absolute bottom-[-20px] left-[-20px] w-24 h-24 bg-pink-500/20 blur-[40px] rounded-full pointer-events-none transition-all duration-700 group-hover:bg-pink-500/30" />
@@ -182,7 +182,7 @@ export default function Settings() {
                 {/* Main Content Area */}
                 <div className="flex-1 min-w-0">
                     {activeTab === 'profile' ? (
-                        <form onSubmit={handleSave} className="bg-[#131128] rounded-[40px] p-8 md:p-12 border border-white/5 relative overflow-hidden">
+                        <form onSubmit={handleSave} className="bg-[#131128] rounded-[32px] md:rounded-[40px] p-5 md:p-8 lg:p-12 border border-white/5 relative overflow-hidden">
                             {/* Decorative Background */}
                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary-purple/10 blur-[100px] rounded-full pointer-events-none" />
 
@@ -310,7 +310,7 @@ export default function Settings() {
                             </div>
                         </form>
                     ) : (
-                        <div className="bg-[#131128] rounded-[40px] p-8 md:p-12 border border-white/5 relative overflow-hidden min-h-[500px]">
+                        <div className="bg-[#131128] rounded-[32px] md:rounded-[40px] p-5 md:p-8 lg:p-12 border border-white/5 relative overflow-hidden min-h-[500px]">
                             {/* Decorative Background */}
                             <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 blur-[100px] rounded-full pointer-events-none" />
 
